@@ -1,0 +1,33 @@
+50*#
+START: 20231121 15:15:48 Europe/Tallinn END: 20231121 15:16:18 Europe/Tallinn
+50*#Date: 20231120 23:14:30 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:31 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:32 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:33 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:34 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:35 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:36 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:37 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:38 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:39 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:40 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:41 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:42 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:43 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:44 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:45 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:46 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:47 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:48 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:49 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:50 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:51 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:52 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:53 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:54 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:55 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:56 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:57 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:58 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+Date: 20231120 23:14:59 Europe/Tallinn, O: 61.2, H: 61.2, L: 61.2, C 61.2
+
