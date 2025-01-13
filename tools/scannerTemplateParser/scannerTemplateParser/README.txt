@@ -1,4 +1,4 @@
-createScan.py
+createScanner.py
 
 This script will parse an advanced scanner template
 exported from TWS and return a scanner object that 
@@ -25,3 +25,5 @@ In TWS
 results.
 3. Click on floppy-disc icon in upper-right part of the
 screen to export the template
+
+Output can be used with WEB API's scanner request also.
