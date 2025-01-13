@@ -2,19 +2,17 @@ createScanner.py
 
 This script will parse an advanced scanner template
 exported from TWS and return a scanner object that 
-can be used with ibapi library.
+can be used with Scanner object of ibapi library.
 
 The ElementTree XML library is used to parse the
 xml template.
 
-Script should check for included properties within 
-certain tags and if they are present - add obtained 
-values to scanner subscription object of ibapi.
+Script assigns values of specific tags as properties
+for Scanner object and checks if there are additional
+filters.
 
-It is expected that scanner template is used as input.
-Since scanner template has extension .stp but is format
-ted as xml document - changing extension to .xml is
-required.
+It is expected that default extensio of a template
+.stp is changed to .xml manually.
 
 How to acquire the scanner template from TWS:
 
