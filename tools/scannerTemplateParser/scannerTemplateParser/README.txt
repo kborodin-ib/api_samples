@@ -2,7 +2,8 @@ createScanner.py
 
 This script will parse an advanced scanner template
 exported from TWS and return a scanner object that 
-can be used with Scanner object of ibapi library.
+can be used with Scanner object of ibapi library and
+WEB API's call to /scanner/run endpoint.
 
 The ElementTree XML library is used to parse the
 xml template.
@@ -23,5 +24,3 @@ In TWS
 results.
 3. Click on floppy-disc icon in upper-right part of the
 screen to export the template
-
-Output can be used with WEB API's scanner request also.
