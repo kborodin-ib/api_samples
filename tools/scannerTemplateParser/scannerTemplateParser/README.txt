@@ -1,3 +1,5 @@
+createScan.py
+
 This script will parse an advanced scanner template
 exported from TWS and return a scanner object that 
 can be used with ibapi library.
