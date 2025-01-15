@@ -20,8 +20,6 @@ class TestApp(EWrapper, EClient):
         EWrapper.__init__(self)
         EClient.__init__(self, self)
 
-    # WRAPPERS HERE
-
     def error(self, reqId: int, errorCode: int, errorString: str,
             advansedOrderreject):
         super().error(reqId, errorCode, errorString, advansedOrderreject)
@@ -41,8 +39,7 @@ class TestApp(EWrapper, EClient):
     def tickPrice(self, reqId, tickType, price: float,
                   attrib):
         super().tickPrice(reqId, tickType, price, attrib)
-        if tickType == 4:
-            print("TickPrice. TickerId:", reqId, "tickType:", tickType,
+        print("TickPrice. TickerId:", reqId, "tickType:", tickType,
                   "Price:", floatMaxString(price), "CanAutoExecute:", attrib.canAutoExecute,
                   attrib.preOpen)
 
@@ -62,33 +59,18 @@ class TestApp(EWrapper, EClient):
     def tickString(self, reqId, tickType, value: str):
         super().tickString(reqId, tickType, value)
         print("TickString. TickerId:", reqId, "Type:", tickType, "Value:", value)
-
-    def tickSnapshotEnd(self, reqId: int):
-        super().tickSnapshotEnd(reqId)
-        print("TickSnapshotEnd. TickerId:", reqId)
-
-    def openOrder(self, orderId, contract, order, orderState):
-            print(orderId, contract, order, orderState)
-
-    def orderStatus(self, orderId, status: str, filled, remaining, avgFillPrice: float, permId: int, parentId: int, lastFillPrice: float, clientId: int, whyHeld: str, mktCapPrice: float):
-          super().orderStatus(orderId, status, filled, remaining, avgFillPrice, permId, parentId, lastFillPrice, clientId, whyHeld, mktCapPrice)
-
-    def execDetails(self, reqId: int, contract, execution):
-          print("ExecDetails. ReqId:", reqId, "Symbol:", contract.symbol, "SecType:", contract.secType, "Currency:", contract.currency, execution)
-        
+  
     def currentTime(self, time):
         super().currentTime(time)
         print("current server time: ", time)
 
     def start(self):
         contract = CustomContracts().isinAaplContract()
-        
-        print('hello')
         print(contract)
         self.reqCurrentTime()
         self.reqContractDetails(self.nextValidOrderId, contract)
-#        self.reqMarketDataType('1')
-#        self.reqMktData(8, contract, '', False, False, [])
+        self.reqMarketDataType('1')
+        self.reqMktData(8, contract, '', False, False, [])
 
     def stop(self):
         self.done = True
