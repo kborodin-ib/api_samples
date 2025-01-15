@@ -1,0 +1,21 @@
+createScanner.py
+
+Script accepts TWS scanner template file as input.
+It than parses it for scanner parameters and returns
+Scanner object and TagValues object that can be used
+with scannerRun.py script to replicate same scan
+programmatically.
+
+How to export the scanner template from TWS:
+
+In TWS
+
+1. Click New Window -> Scanners -> Advanced market scanner
+2. Define the scan and run it to confirm if there are any
+results.
+3. Click on floppy-disc icon in upper-right part of the
+screen to export the template
+4. Change the extension of the template to .xml
+
+The ElementTree XML python library is used to parse the
+xml template.
