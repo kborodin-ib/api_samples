@@ -13,7 +13,7 @@ from ibapi.contract import Contract
 from ibapi.utils import decimalMaxString, floatMaxString, intMaxString
 from ibapi.scanner import ScannerSubscription
 from ibapi.tag_value import TagValue
-from createScanner import createScanner
+from parseTemplate import createScanner
 from threading import Timer
 
 class TestApp(EWrapper, EClient):
