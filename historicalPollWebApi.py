@@ -36,6 +36,8 @@ async def poll_history(conid):
             try:
                 response = await limited_get(client, URL, request_params)
 
+                retry_503 = False
+
                 if response.status_code == 503:
                     print(f"[{time.strftime('%X')}] Server unavailable. Retrying after {POLL_INTERVAL} seconds")
 
@@ -61,6 +63,10 @@ async def poll_history(conid):
                 else:
                     print(f"[{time.strftime('%X')}] Received status: {response.status_code})")
                     print(response.text)
+
+                if retry_503:
+                    await asyncio.sleep(2)
+                    continue # Retry immediately
 
 
             except httpx.RequestError as exc:
