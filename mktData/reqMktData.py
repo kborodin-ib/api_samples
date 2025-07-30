@@ -1,18 +1,23 @@
 #! /usr/bin/env python3
 
 import logging
-import datetime
-import sys
-from threading import Timer
 import ibapi
+print(f'ibapi version: ', ibapi.__version__)
 import time
 from ibapi.wrapper import EWrapper
 from ibapi.client import EClient
-from ibapi.order import Order
-from ibapi.contract import Contract
 from ibapi.utils import decimalMaxString, floatMaxString, intMaxString
 from contracts import CustomContracts
 
+# protobuf is not implemented in version prior to 10.39 so cannot be imported
+try:
+    import google.protobuf
+    print(google.protobuf.__version__)
+except ImportError:
+    pass
+
+logger = logging.getLogger(__name__)
+logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
 
 class TestApp(EWrapper, EClient):
 
@@ -20,11 +25,12 @@ class TestApp(EWrapper, EClient):
         EWrapper.__init__(self)
         EClient.__init__(self, self)
 
-    def error(self, reqId: int, errorCode: int, errorString: str,
-            advansedOrderreject):
+    def error(self, reqId: int, errorCode: int, errorString: str, errorTime,
+            advansedOrderreject=""):
         super().error(reqId, errorCode, errorString, advansedOrderreject)
-        error_message = f'Error id: {reqId}, Error code: {errorCode}, ' \
+        error_message = f'Error time: {errorTime}, Error id: {reqId}, Error code: {errorCode}, ' \
                         + f'Msg: {errorString}'
+        print(error_message)
 
     # Provides next valid identifier needed to place an order
     # Indicates that the connection has been established and other messages can be sent from
@@ -49,12 +55,12 @@ class TestApp(EWrapper, EClient):
 
     def tickSize(self, reqId, tickType, size):
         super().tickSize(reqId, tickType, size)
-        if tickType == 4:
+        if tickType == 29 or tickType == 30:
             print("TickSize. TickerId:", reqId, "TickType:", tickType, "Size: ", decimalMaxString(size))
-
+            time.sleep(5)
     def tickGeneric(self, reqId, tickType, value: float):
         super().tickGeneric(reqId, tickType, value)
-        print("TickGeneric. TickerId:", reqId, "TickType:", tickType, "Value:", floatMaxString(value))
+        print("OPEN INTERESET: TickGeneric. TickerId:", reqId, "TickType:", tickType, "Value:", floatMaxString(value))
 
     def tickString(self, reqId, tickType, value: str):
         super().tickString(reqId, tickType, value)
@@ -65,11 +71,11 @@ class TestApp(EWrapper, EClient):
         print("current server time: ", time)
 
     def start(self):
-        contract = CustomContracts().isinAaplContract()
+        contract = CustomContracts().toyotaContract()
         print(contract)
         self.reqCurrentTime()
         self.reqContractDetails(self.nextValidOrderId, contract)
-        self.reqMarketDataType('1')
+       # self.reqMarketDataType('1')
         self.reqMktData(8, contract, '', False, False, [])
 
     def stop(self):
@@ -79,13 +85,12 @@ class TestApp(EWrapper, EClient):
 
 def main():
     app = TestApp()
-    cid = sys.argv[1]
-    port = int(sys.argv[2])
+    cid = 0 #sys.argv[1]
+    port = 7496  #int(sys.argv[2])
     while True:
         if not app.isConnected():
-            app.connect('172.22.21.200', port, clientId=cid)
+            app.connect('127.0.0.1', port, clientId=cid)
         print(f'{app.serverVersion()} --- {app.twsConnectionTime().decode()}')
-        print(f'ibapi version: ', ibapi.__version__)
     #   Timer(15, app.stop).start()
         app.run()
 
