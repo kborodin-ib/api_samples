@@ -25,10 +25,12 @@ async def poll_history(conid):
     request_params = {
         'conid': conid,
         'exchange': 'SMART',
-        'period': '6d',
-        'bar': '5min',
+        'period': '3h',
+        'bar': '1min',
         'outsideRth': True,
-        'startTime': '20250513-00:00:00'
+        'direction': 1,
+        'barType': 'last'
+ #       'startTime': '20250513-00:00:00'
     }
 
     async with httpx.AsyncClient(verify=False) as client:
@@ -40,6 +42,7 @@ async def poll_history(conid):
 
                 if response.status_code == 503:
                     print(f"[{time.strftime('%X')}] Server unavailable. Retrying after {POLL_INTERVAL} seconds")
+                    retry_503 = True
 
                 elif response.status_code == 429:
                     print(f"[{time.strftime('%X')}] Too many requests. Try again in 10 minutes.")
@@ -75,8 +78,9 @@ async def poll_history(conid):
             await asyncio.sleep(POLL_INTERVAL)
 
 async def main():
-    tasks = [poll_history(conid) for conid in CONIDS]
-    await asyncio.gather(*tasks)
+    tasks_conid_list = [poll_history(conid) for conid in CONIDS]
+    tasks_single_conid = [poll_history(356068332)]
+    await asyncio.gather(*tasks_single_conid)
 
 if __name__ == "__main__":
     asyncio.run(main())
