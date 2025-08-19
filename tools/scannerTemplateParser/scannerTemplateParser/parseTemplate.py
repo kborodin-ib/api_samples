@@ -35,6 +35,8 @@ def createScanner(xml):
             print("Tag :", el.tag)
             print("Text: ", el.text)
         tagValues = [TagValue(el.tag, el.text) for el in advFilter]
+    else:
+        tagValues = ""
 
     return scanner, tagValues 
 
