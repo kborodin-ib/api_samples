@@ -64,7 +64,7 @@ class TestApp(EWrapper, EClient):
 
     def start(self):
         self.reqCurrentTime()
-        self.reqSecDefOptParams(self.nextValidOrderId, "AARTIIND", "", "STK", 56988365)
+        self.reqSecDefOptParams(self.nextValidOrderId, underlyingSymbol="CL", utFopExchange="NYMEX", underlyingSecType="FUT", underlyingConId=304037495)
 
     def stop(self):
         self.done = True
@@ -73,7 +73,7 @@ class TestApp(EWrapper, EClient):
 def main():
     try:
         app = TestApp()
-        app.connect('192.168.43.222', 7496, clientId=0)
+        app.connect('127.0.0.1', 7496, clientId=0)
         print(f'{app.serverVersion()} --- {app.twsConnectionTime().decode()}')
         print(f'ibapi version: ', ibapi.__version__)
 #        Timer(15, app.stop).start()
