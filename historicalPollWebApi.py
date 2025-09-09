@@ -6,6 +6,7 @@ import sys
 POLL_INTERVAL = 5 # seconds
 RPS_LIMIT = 10 # max 10 request per second
 URL = "https://localhost:5000/v1/api/iserver/marketdata/history"
+URL_BETA = "https://localhost:5000/v1/api/hmds/history"
 CONIDS = [265598, 9939, 10517, 14241431, 10627, 11032, 11574, 2585629]
 
 # Global rate limiter
@@ -29,14 +30,21 @@ async def poll_history(conid):
         'bar': '1min',
         'outsideRth': True,
         'direction': 1,
-        'barType': 'last'
+        'barType': 'Inventory',
  #       'startTime': '20250513-00:00:00'
+    }
+
+    request_params_beta = {
+        "conid": conid,
+        "period": "1d",
+        "bar": "1d",
+        "barType": "Inventory"
     }
 
     async with httpx.AsyncClient(verify=False) as client:
         while True:
             try:
-                response = await limited_get(client, URL, request_params)
+                response = await limited_get(client, URL_BETA, request_params_beta)
 
                 retry_503 = False
 
