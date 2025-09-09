@@ -25,10 +25,10 @@ class TestApp(EWrapper, EClient):
         EWrapper.__init__(self)
         EClient.__init__(self, self)
 
-    def error(self, reqId: int, errorCode: int, errorString: str, errorTime,
-            advansedOrderreject=""):
+    def error(self, reqId: int, errorCode: int, errorString: str,
+              advansedOrderreject=""):
         super().error(reqId, errorCode, errorString, advansedOrderreject)
-        error_message = f'Error time: {errorTime}, Error id: {reqId}, Error code: {errorCode}, ' \
+        error_message = f'Error id: {reqId}, Error code: {errorCode}, ' \
                         + f'Msg: {errorString}'
         print(error_message)
 
@@ -51,16 +51,17 @@ class TestApp(EWrapper, EClient):
 
     def contractDetails(self, reqId, contractDetails):
         super().contractDetails(reqId, contractDetails)
-        print("contract details: ", reqId, contractDetails)
+        print("[+] Contract Details: ", reqId, contractDetails)
 
     def tickSize(self, reqId, tickType, size):
         super().tickSize(reqId, tickType, size)
-        if tickType == 29 or tickType == 30:
-            print("TickSize. TickerId:", reqId, "TickType:", tickType, "Size: ", decimalMaxString(size))
-            time.sleep(5)
+        print("TickSize. TickerId:", reqId, "TickType:", tickType, "Size: ", decimalMaxString(size))
+
+
     def tickGeneric(self, reqId, tickType, value: float):
         super().tickGeneric(reqId, tickType, value)
-        print("OPEN INTERESET: TickGeneric. TickerId:", reqId, "TickType:", tickType, "Value:", floatMaxString(value))
+        if tickType == 46:
+            print("OPEN INTERESET: TickGeneric. TickerId:", reqId, "TickType:", tickType, "Value:", floatMaxString(value))
 
     def tickString(self, reqId, tickType, value: str):
         super().tickString(reqId, tickType, value)
@@ -71,12 +72,12 @@ class TestApp(EWrapper, EClient):
         print("current server time: ", time)
 
     def start(self):
-        contract = CustomContracts().toyotaContract()
+        contract = CustomContracts().oilyContract()
         print(contract)
         self.reqCurrentTime()
         self.reqContractDetails(self.nextValidOrderId, contract)
-       # self.reqMarketDataType('1')
-        self.reqMktData(8, contract, '', False, False, [])
+        self.reqMarketDataType('1')
+        self.reqMktData(8, contract, '236', False, False, [])
 
     def stop(self):
         self.done = True
@@ -86,13 +87,22 @@ class TestApp(EWrapper, EClient):
 def main():
     app = TestApp()
     cid = 0 #sys.argv[1]
-    port = 7496  #int(sys.argv[2])
+    port = 7497  #int(sys.argv[2])
+    time_seconds = 300 # 5 minutes
+    start_time = time.time()
     while True:
+        elapsed = time.time() - start_time
+        if elapsed > time_seconds:
+            print("[+] Recconectio timeout exceeded")
+            sys.exit()
+            
         if not app.isConnected():
+            print("[+] Reconnecting")
             app.connect('127.0.0.1', port, clientId=cid)
-        print(f'{app.serverVersion()} --- {app.twsConnectionTime().decode()}')
-    #   Timer(15, app.stop).start()
-        app.run()
+            time.sleep(3)
+        else:
+            print(f'{app.serverVersion()} --- {app.twsConnectionTime().decode()}')
+            app.run()
 
 if __name__ == '__main__':
     main()
