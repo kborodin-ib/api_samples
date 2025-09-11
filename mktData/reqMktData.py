@@ -72,11 +72,11 @@ class TestApp(EWrapper, EClient):
         print("current server time: ", time)
 
     def start(self):
-        contract = CustomContracts().oilyContract()
+        contract = CustomContracts().nqFutures()
         print(contract)
         self.reqCurrentTime()
         self.reqContractDetails(self.nextValidOrderId, contract)
-        self.reqMarketDataType('1')
+        self.reqMarketDataType('3')
         self.reqMktData(8, contract, '236', False, False, [])
 
     def stop(self):
@@ -93,9 +93,9 @@ def main():
     while True:
         elapsed = time.time() - start_time
         if elapsed > time_seconds:
-            print("[+] Recconectio timeout exceeded")
+            print("[+] Recconection timeout exceeded")
             sys.exit()
-            
+
         if not app.isConnected():
             print("[+] Reconnecting")
             app.connect('127.0.0.1', port, clientId=cid)
