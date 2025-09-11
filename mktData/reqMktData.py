@@ -9,7 +9,7 @@ from ibapi.client import EClient
 from ibapi.utils import decimalMaxString, floatMaxString, intMaxString
 from contracts import CustomContracts
 
-# protobuf is not implemented in version prior to 10.39 so cannot be imported
+# protobuf is not implemented in version prior to 10.37 so cannot be imported
 try:
     import google.protobuf
     print(google.protobuf.__version__)
