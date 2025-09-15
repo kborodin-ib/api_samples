@@ -49,9 +49,7 @@ class TestApp(EWrapper, EClient):
 
     def historicalNews(self, reqId: int, time: str, providerCode: str,
                        articleId: str, headline: str):
-        print(time, headline)
-        endDate = "2022-05-28 23:59:59"
-#        result = self.compareDates(time, endDate)
+        print(f"PROVIDER: {providerCode}, ARTICLE ID: {articleId}, TIME: {time}")
 
     def historicalNewsEnd(self, reqId, hasMore):
         super().historicalNewsEnd(reqId, hasMore)
@@ -60,12 +58,12 @@ class TestApp(EWrapper, EClient):
     def tickNews(self, tickerId, timeStamp, providerCode, articleId, headline, extraData):
         print(extraData)
 
-#    def newsArticle(self, reqId: int, articleType: int, articleText: str):
-#        print("NewsArticle. ReqId:", reqId, "ArticleType:", articleType,
-#              "ArticleText:", articleText)
-#        print('sentiment' in articleText)
-#        print(articleText.index('sentiment'))
-#        print(articleText[5060:5190])
+    def newsArticle(self, reqId: int, articleType: int, articleText: str):
+        print("NewsArticle. ReqId:", reqId, "ArticleType:", articleType,
+             "ArticleText:", articleText)
+        print('sentiment' in articleText)
+        print(articleText.index('sentiment'))
+        print(articleText[5060:5190])
 
 
     def tickPrice(self, reqId, tickType, price:float,
@@ -77,18 +75,11 @@ class TestApp(EWrapper, EClient):
 
 
     def start(self):
-        print('@###################################')
-        print("Start date is a lie")
-        endDate = "asoklfbnhklasjdf"
-        endDate = "'"
-        endDate = "\u0000"
-        endDate = 0x00 
-        endDate = '\x0af'
-        endDate = '\x00'
-        endDate = "2021-05-28 23:59:59"
-#        endDate = '?'
+
+        endDate = "2024-05-18 23:59:59"
+        endDate = ""
         self.reqNewsProviders()    
-        self.reqHistoricalNews(10003, 265598, "BZ+FLY", "2024-04-28 23:59:59", endDate, '300', [])
+        self.reqHistoricalNews(10003, 265598, "DJ-N", "", "2024-05-18 23:59:59", '300', [])
      #   self.reqNewsArticle(self.nextValidOrderId, "BZ", "BZ$1387d258", [])
 
 
@@ -101,7 +92,7 @@ class TestApp(EWrapper, EClient):
 def main():
     try:
         app = TestApp()
-        app.connect('172.22.21.200', 7496, clientId=0)
+        app.connect('127.0.0.1', 7496, clientId=0)
         print(f'{app.serverVersion()} --- {app.twsConnectionTime().decode()}')
         print(f'ibapi version: ', ibapi.__version__)
         Timer(5, app.stop).start()
