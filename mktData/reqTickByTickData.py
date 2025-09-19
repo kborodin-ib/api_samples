@@ -1,96 +1,51 @@
 #! /usr/bin/env python3
 
-import ibapi
-from ibapi.wrapper import EWrapper
-from ibapi.client import EClient
-import datetime
-from ibapi.contract import (Contract, ContractDetails)
-from ibapi.utils import Decimal, floatMaxString, decimalMaxString
+from ibapi.client import *
+from ibapi.wrapper import *
+from datetime import datetime
+from contracts import CustomContracts
+port = 7497
 
-class TestApp(EWrapper, EClient):
 
+class TestApp(EClient, EWrapper):
     def __init__(self):
-        EWrapper.__init__(self)
         EClient.__init__(self, self)
 
-    # WRAPPERS HERE
-    def nextValidId(self, orderId):
-        super().nextValidId(orderId)
-        #logging.debug(f"Next valid ID is set to {orderId}")
-        self.nextValidOrderId = orderId
-       # As soon as next valid id is received it is safe to send requests
-        self.start()
+    def nextValidId(self, orderId: OrderId):
 
+        mycontract = CustomContracts().esFutures()
 
-    def contractDetails(self, reqId: int, contractDetails: ContractDetails):
-        super().contractDetails(reqId, contractDetails)
-        self.contract = contractDetails.contract # store contract in the TestApp instance
-        symbol = contractDetails.contract.symbol
-        self.reqHistoricalNews(reqId, contractDetails.contract.conId , "BRFG", "", "", 300, [])
+        # self.reqMarketDataType(3)
 
-    def tickByTickAllLast(self, reqId: int, tickType: int, time: int, price: float,
-                          size: Decimal, tickAtrribLast, exchange: str,
-                          specialConditions: str):
-        super().tickByTickAllLast(reqId, tickType, time, price, size, tickAtrribLast,
-                                  exchange, specialConditions)
-        if tickType == 1:
-            print("Last.", end='')
-        else:
-            print("AllLast.", end='')
-        print(" ReqId:", reqId,
-              "Time:", datetime.datetime.fromtimestamp(time).strftime("%Y%m%d-%H:%M:%S"),
-              "Price:", floatMaxString(price), "Size:", decimalMaxString(size), "Exch:" , exchange,
-              "Spec Cond:", specialConditions, "PastLimit:", tickAtrribLast.pastLimit, "Unreported:", tickAtrribLast.unreported)
+        self.reqTickByTickData(
+            reqId=123,
+            contract=mycontract,
+            tickType="AllLast",
+            numberOfTicks=1000,
+            ignoreSize=False
+        )
 
-    def tickByTickBidAsk(self, reqId: int, time: int, bidPrice: float, askPrice: float,
-                         bidSize: Decimal, askSize: Decimal, tickAttribBidAsk):
-        super().tickByTickBidAsk(reqId, time, bidPrice, askPrice, bidSize,
-                                 askSize, tickAttribBidAsk)
-        print("BidAsk. ReqId:", reqId,
-              "Time:", datetime.datetime.fromtimestamp(time).strftime("%Y%m%d-%H:%M:%S"),
-              "BidPrice:", floatMaxString(bidPrice), "AskPrice:", floatMaxString(askPrice), "BidSize:", decimalMaxString(bidSize),
-              "AskSize:", decimalMaxString(askSize), "BidPastLow:", tickAttribBidAsk.bidPastLow, "AskPastHigh:", tickAttribBidAsk.askPastHigh)
-        if reqId == 90 or reqId == '90':
-            print(90)
-            self.disconnect()
-        
+    # whatToShow=BidAsk
+    def tickByTickBidAsk(self, reqId: int, time: int, bidPrice: float, askPrice: float, bidSize: int, askSize: int, tickAttribBidAsk: TickAttribBidAsk):
+        print(f"reqId: {reqId}, time: {datetime.fromtimestamp(time) }, bidPrice: {bidPrice}, askPrice: {askPrice}, bidSize: {bidSize}, askSize: {askSize}, tickAttribBidAsk: {tickAttribBidAsk}")
+
+    # whatToShow=MidPoint
     def tickByTickMidPoint(self, reqId: int, time: int, midPoint: float):
-        super().tickByTickMidPoint(reqId, time, midPoint)
-        print("Midpoint. ReqId:", reqId,
-              "Time:", datetime.datetime.fromtimestamp(time).strftime("%Y%m%d-%H:%M:%S"),
-              "MidPoint:", floatMaxString(midPoint))
+        print(f"reqId: {reqId}", time, midPoint)
 
-    def start(self):
-
-        contract = Contract()
-        contract.symbol = 'AAPL'
-        contract.exchange = 'SMART'
-        contract.currency = 'USD'
-        contract.secType = "STK"
+    # # whatToShow=AllLast
+    def tickByTickAllLast(self, reqId: int, tickType: int, time: int, price: float, size: int, tickAttribLast: TickAttribLast, exchange: str, specialConditions: str):
+        # Tick type does not correspond to tickType.py
+        if tickType == 1:
+            print(f"Last. reqId: {reqId}, time: {datetime.fromtimestamp(time)}, price: {price}, size: {size}, tickAttribLast: {tickAttribLast}, exchange: {exchange}, specialConditions: {specialConditions}")
+        else:
+            print(f"AllLast. reqId: {reqId}, time: {datetime.fromtimestamp(time)}, price: {price}, size: {size}, tickAttribLast: {tickAttribLast}, exchange: {exchange}, specialConditions: {specialConditions}")
         
-        startDate = "20230308 10:30:00 US/Eastern"
-        self.reqTickByTickData(1, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
-        self.reqTickByTickData(2, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
-        self.reqTickByTickData(3, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
-        self.reqTickByTickData(4, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
-        self.reqTickByTickData(5, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
-        self.reqTickByTickData(6, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
-        self.reqTickByTickData(7, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
-        self.reqTickByTickData(8, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
-        for i in range(9,70):
-            self.reqTickByTickData(i, contract, "BidAsk", numberOfTicks=0, ignoreSize=1)
 
-    def stop(self):
-        self.done = True
-        self.disconnect()
+    def tickSnapshotEnd(self, reqId: int):
+        print(f"tickSnapshotEnd. reqId:{reqId}")
 
-def main():
-    try:
-        app = TestApp()
-        app.connect('192.168.43.222', 7496, clientId=1)
-        app.run()
-    except Exception as err:
-        print(err)
 
-if __name__ == '__main__':
-    main()
+app = TestApp()
+app.connect("127.0.0.1", port, 1001)
+app.run()
