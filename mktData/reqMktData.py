@@ -2,19 +2,19 @@
 
 import logging
 import ibapi
-print(f'ibapi version: ', ibapi.__version__)
 import time
+import sys
 from ibapi.wrapper import EWrapper
 from ibapi.client import EClient
 from ibapi.utils import decimalMaxString, floatMaxString, intMaxString
 from contracts import CustomContracts
 
-# protobuf is not implemented in version prior to 10.37 so cannot be imported
 try:
     import google.protobuf
     print(google.protobuf.__version__)
 except ImportError:
-    pass
+    print("google.protobuff needs to be added")
+    sys.exit()
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(filename='example.log', encoding='utf-8', level=logging.DEBUG)
