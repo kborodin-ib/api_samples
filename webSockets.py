@@ -231,8 +231,25 @@ async def sendMessages(msgList):
             if 'error' in jsonData.keys():
                 print(jsonData['error'])
 
+def marketDepthRequest(symbol=None, secType=None, conID=None, acctID=None, exchange=None):
+
+    if conID is None:
+        conID = searchBySymbol(symbol, secType)
+
+    if acctID is None:
+        acctIDs = getAccountId()
+        acctID = acctIDs[0]
+
+    if exchange is None:
+        details = getContractDetails(conID)
+        exchange = details['exchange']
+
+    msg = f"sbd+{acctID}+{conID}+{exchange}"
+
+    return msg
+
 def MktDepthRequests():
-    symbols = [("BMW", "STK"),("AAPL", "STK")]
+    symbols = [("MGC", "STK")]
     messages = []
     for s in symbols:
         msg = marketDepthRequest(symbol=s[0], secType=s[1])
@@ -277,13 +294,13 @@ def sendMultipleMessages():
     asyncio.get_event_loop().run_until_complete(sendMessages(messages))
 
 def liveMarketData():
-    req = create_SMD_req('79702479', '31,84,86,88,85,31,6509,7762,7697')
+    req = create_SMD_req('79702479', '31,84,86,88,85,31,6509,7762,7697,7283')
     messages = [req]
     asyncio.get_event_loop().run_until_complete(sendMessages(messages))
 
 
 def main():
-    liveMarketData()
+    MktDepthRequests()
 
 if __name__ == "__main__":
     urllib3.disable_warnings()
