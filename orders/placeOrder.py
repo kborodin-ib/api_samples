@@ -9,7 +9,9 @@ from ibapi.client import EClient
 from ibapi.contract import Contract
 from ibapi.execution import Execution
 from ibapi.order import Order
-import logging 
+import logging
+
+
 
 
 #logging.basicConfig(
@@ -20,6 +22,32 @@ import logging
 #
 # logger = logging.getLogger(__name__)
 
+def novemberCTcontract():
+
+    contract = Contract()
+
+    contract.symbol = "CT"
+    contract.secType = "FOP"
+    contract.lastTradeDateOrContractMonth = "20251017"
+    contract.strike = 50
+    contract.right = "C"
+    contract.multiplier = 50000
+    contract.exchange = "NYBOT"
+    contract.symbol = "CT"
+    contract.tradingClass = "CT"
+
+    return contract
+
+def novCTcontractCONID():
+
+    contract = Contract()
+    contract.symbol = "CT"
+    contract.conId = 718149824
+    contract.exchange = "NYBOT"
+    contract.currency = "USD"
+
+    return contract
+
 class TestApp(EWrapper, EClient):
 
 
@@ -28,11 +56,11 @@ class TestApp(EWrapper, EClient):
         EClient.__init__(self, self)
         self.dataframe = {}
 
-    def error(self, reqId: int, errorCode: int, errorString: str, errorTime,
-              advansedOrderreject=""):
+    def error(self, reqId: int, errorTime, errorCode: int, errorString: str,
+              advansedOrderreject=''):
         super().error(reqId, errorCode, errorString, advansedOrderreject)
-        error_message = f'Error time: {errorTime}, Error id: {reqId}, Error code: {errorCode}, ' \
-                        + f'Msg: {errorString}'
+        error_message = f'Error id: {reqId}, Error code: {errorCode}, ' \
+                        + f'Msg: {errorString}, {errorTime}'
         print(error_message)
 
     def contractDetails(self, reqId, contractDetails):
@@ -56,18 +84,18 @@ class TestApp(EWrapper, EClient):
         print("NVOID: ", self.nextValidOrderId)
         self.start()
 
- #   def openOrder(self, orderId, contract, order, orderState):
- #       print("Open Order: ", orderId, contract, order)
-  #      self.attachStopLoss(orderId, order=order, contract=contract)
+    def openOrder(self, orderId, contract, order, orderState):
+        print("Open Order: ", orderId, contract, order)
+        self.attachStopLoss(orderId, order=order, contract=contract)
 
- #  def orderStatus(self, orderId, status, filled, remaining,
-  #          avgFillPrice, permid, parentId, lastFillPrice,
-  #          clientId, whyHeld, mktCapPrice):
-   #     print(f"Order Status: id: {orderId}, status: {status}," +\
-   #             f"filled: {filled}, remaining: {remaining}," +\
-   #             f"avgFillPrice: {avgFillPrice}, permid: {permid}," +\
-   #             f"parentId: {parentId}, lastFillPrice: {lastFillPrice}," +\
-    #            f"clientId: {clientId}, whyHeld: {whyHeld}, mktCapPrice: {mktCapPrice}")
+    def orderStatus(self, orderId, status, filled, remaining,
+            avgFillPrice, permid, parentId, lastFillPrice,
+            clientId, whyHeld, mktCapPrice):
+        print(f"Order Status: id: {orderId}, status: {status}," +\
+                f"filled: {filled}, remaining: {remaining}," +\
+                f"avgFillPrice: {avgFillPrice}, permid: {permid}," +\
+                f"parentId: {parentId}, lastFillPrice: {lastFillPrice}," +\
+                f"clientId: {clientId}, whyHeld: {whyHeld}, mktCapPrice: {mktCapPrice}")
 
     def attachStopLoss(self, parentOid, contract, order):
         stopLoss = Order()
@@ -101,7 +129,7 @@ class TestApp(EWrapper, EClient):
         order.totalQuantity = 1
         order.auxPrice = 108.55
         order.hidden = True
-        order.tif = 'DAY'
+        order.tif = 'IOC'
         order.advancedErrorOverride="EUROWARN4LIQ"
 
 #        adjusted = Order()
@@ -125,29 +153,30 @@ class TestApp(EWrapper, EClient):
         contract1 = Contract()
 
         contract1.symbol = "AAPL"
-        contract1.exchange = "SMART"
+        contract1.exchange = "OVERNIGHT"
         contract1.conId = 265598
 
         contract2 = Contract()
 
         contract2.symbol = "MSFT"
-        contract2.exchange = "SMART"
+        contract2.exchange = "OVERNIGHT"
         contract2.conId = 272093
 
         order = Order()
         order.orderType = "LMT"
-        order.action = "BUY"
+        order.action = "SELL"
         order.lmtPrice = 221.02
         order.outsideRth = True
-        order.totalQuantity = 1000
+        order.totalQuantity = 1
+        order.tif = "OVERNIGHT + DAY"
 
         lmtOrder = Order()
 
         lmtOrder.orderType = "LMT"
-        lmtOrder.action = "BUY"
+        lmtOrder.action = "SELL"
         lmtOrder.lmtPrice = 520.60
         lmtOrder.outsideRth = True
-        lmtOrder.totalQuantity = 1000
+        lmtOrder.totalQuantity = 1
         lmtOrder.tif = "OVERNIGHT + DAY"
 
         self.placeOrder(oid, contract1, order)
@@ -156,22 +185,18 @@ class TestApp(EWrapper, EClient):
 
     def placeSampleOrder(self):
 
-        contract = Contract()
+  #      contract = novemberCTcontract()
 
-        contract.conid = 265598
-        contract.secType = "STK"
-        contract.exchange = "OVERNIGHT"
-        contract.primaryExchange = "NASDAQ"
-        contract.symbol = "AAPL"
-        contract.currency = "USD"
+        contract = novCTcontractCONID()
 
         order = Order()
 
-        order.orderType = "LMT"
-        order.lmtPrice = 240.69
+        order.orderType = "MKT"
+      #  order.lmtPrice = 254.66
         order.totalQuantity = 1
-   #     order.tif = "OVERNIGHT + DAY"
+        order.tif = "IOC"
         order.action = "BUY"
+        #order.outsideRth = True
 
         oid = self.nextValidOrderId
         self.placeOrder(oid, contract, order)
@@ -180,8 +205,8 @@ class TestApp(EWrapper, EClient):
 
         oid = self.nextValidOrderId
        # accounts = ['DU74649', 'DU74650']
-        self.placeSampleOrder()
-        self.reqIds(-1)
+        self.placePegBest(oid)
+      #  self.reqIds(-1)
 
     def stop(self):
         self.done = True
