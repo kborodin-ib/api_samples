@@ -59,6 +59,13 @@ def searchBySymbol(symbol: str, sectype: str):
     else:
         raise RuntimeError(f"Nothing found for symbol {symbol} because of response status code: {resp.status_code}")
 
+def getFuturesContractByExpirationDate(symbol, expiration):
+    respo = requests.get(base_url + f"/trsrv/futures?symbols={symbol}", verify=False)
+    jsonData = json.loads(respo.text)
+    for contract in jsonData[symbol]:
+        if contract['expirationDate'] == int(expiration):
+            return contract['conid']
+
 def getContractDetails(conId):
     endpoint = f"/iserver/contract/{conId}/info"
     data = {"conid": conId}
@@ -96,8 +103,6 @@ def marketDepthRequest(symbol=None, secType=None, conID=None, acctID=None, excha
         exchange = details['exchange']
 
     msg = f"sbd+{acctID}+{conID}+{exchange}"
-    msg = f"sbd+{acctID}+{780020212}"
-
     return msg 
 
 
@@ -249,12 +254,30 @@ def marketDepthRequest(symbol=None, secType=None, conID=None, acctID=None, excha
     return msg
 
 def MktDepthRequests():
-    symbols = [("MGC", "STK")]
+    symbols = [("MGC", "FUT")]
     messages = []
     for s in symbols:
         msg = marketDepthRequest(symbol=s[0], secType=s[1])
         messages.append(msg)
     asyncio.get_event_loop().run_until_complete(sendMessages(messages))
+
+def mktDepthByConid(conID, acctID=None, exchange=None):
+
+    if conID == None:
+        print("No conid received")
+        sys.exit()
+
+    if acctID is None:
+        acctIDs = getAccountId()
+        acctID = acctIDs[0]
+
+    if exchange is None:
+        details = getContractDetails(conID)
+        exchange = details['exchange']
+
+    msg = f"sbd+{acctID}+{conID}+{exchange}"
+
+    asyncio.get_event_loop().run_until_complete(sendMessages([msg]))
 
 def HdrRequest():
     hdr = hdrMsg('265598', period = '5min', barSize='5min', source='trades',
@@ -294,13 +317,19 @@ def sendMultipleMessages():
     asyncio.get_event_loop().run_until_complete(sendMessages(messages))
 
 def liveMarketData():
-    req = create_SMD_req('79702479', '31,84,86,88,85,31,6509,7762,7697,7283')
+    req = create_SMD_req('821604607', '31,84,86,88,85,31,6509,7762,7697,7283')
     messages = [req]
     asyncio.get_event_loop().run_until_complete(sendMessages(messages))
 
 
 def main():
-    MktDepthRequests()
+    octoberFutConid = getFuturesContractByExpirationDate("MGC", "20251029")
+
+    if octoberFutConid != None:
+        mktDepthByConid(conID=octoberFutConid)
+    else:
+        print("this expiration does not exist")
+        sys.exit()
 
 if __name__ == "__main__":
     urllib3.disable_warnings()
