@@ -36,10 +36,19 @@ while True:
 
         print(client.get_current_time())
 
-        print(client.get_open_orders())
-        
+        open_orders = client.get_open_orders()
+        if open_orders:
+            print(f"[+] Open Orders: {open_orders}")
+        else:
+            print(f"[+] No open orders currently")
+
+        # This switches to delayed data
         client.reqMarketDataType(3)
 
-        print(client.get_market_data_snapshot(contract))
+        snapshot_data = client.get_market_data_snapshot(contract)
+        if snapshot_data:
+            print(f"[+] Snapshot data: {snapshot_data}")
+        else:
+            print(f"[+] No data available: {snapshot_data}")
 
         break
