@@ -9,10 +9,10 @@ from ibapi.sync_wrapper import TWSSyncWrapper
 from ibapi.contract import Contract
 from ibapi.order_state import OrderState
 
-# Check whether "commission" is one of OrderState class parameters:
+# Check whether "commission" is one of OrderState class attributes:
 orderState = OrderState()
 print(f"OrderState class: {orderState.__dict__}")
-print(f"'commission' parameter is in orderState dict: {'commission' in orderState.__dict__.keys()}")
+print(f"'commission' is in orderState dict: {'commission' in orderState.__dict__.keys()}")
 
 def aaplContract():
 
