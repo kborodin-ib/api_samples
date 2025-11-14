@@ -8,6 +8,18 @@ class CustomContracts():
     def __init__(self):
         self.args = ""
 
+    def vxxStk(self):
+
+        contract = Contract()
+
+        contract.secType = "STK"
+        contract.exchange = "SMART"
+        contract.currency = "USD"
+        contract.symbol = "VXX"
+        contract.primaryExchange = "BATS"
+
+        return contract
+
     def nqFutures(self):
 
         contract = Contract()
