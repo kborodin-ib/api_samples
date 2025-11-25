@@ -24,25 +24,25 @@ class TestApp(EClient, EWrapper):
         leg1 = ComboLeg()
         leg1.conId = 823940009
         leg1.ratio = 1
-        leg1.action = "SELL"
+        leg1.action = "BUY"
         leg1.exchange = "CBOE"
 
         leg2 = ComboLeg()
         leg2.conId = 823940029
         leg2.ratio = 1
-        leg2.action = "BUY"
+        leg2.action = "SELL"
         leg2.exchange = "CBOE"
 
         leg3 = ComboLeg()
         leg3.conId = 823939252
         leg3.ratio = 1
-        leg3.action = "BUY"
+        leg3.action = "SELL"
         leg3.exchange = "CBOE"
 
         leg4 = ComboLeg()
         leg4.conId = 823939259
         leg4.ratio = 1
-        leg4.action = "SELL"
+        leg4.action = "BUY"
         leg4.exchange = "CBOE"
 
         mycontract.comboLegs = [leg1, leg2, leg3, leg4]
@@ -50,7 +50,8 @@ class TestApp(EClient, EWrapper):
         myorder = Order()
         myorder.orderId = orderId
         myorder.action = "BUY"
-        myorder.orderType = "MKT"
+        myorder.orderType = "LMT"
+        myorder.lmtPrice = 31.40
         myorder.totalQuantity = 1
 
 #        myorder.lmtPrice = 6.20
