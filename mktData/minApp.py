@@ -2,12 +2,15 @@
 
 import logging
 import ibapi
-import time
 from ibapi.wrapper import EWrapper
 from ibapi.client import EClient
 from ibapi.contract import Contract
-from contracts import CustomContracts
+from ibapi.execution import Execution
 
+print(Execution.mro())
+exec = Execution()
+
+print(exec.__dict__)
 
 logging.basicConfig(
                 level = logging.INFO,
@@ -24,7 +27,7 @@ class TestApp(EWrapper, EClient):
         EClient.__init__(self, self)
         self.dataframe = {}
 
-    def error(self, reqId: int, errorCode: int, errorString: str,
+    def error(self, reqId: int, errorCode: int, errorString: str, errorTime: str,
               advansedOrderreject=""):
         super().error(reqId, errorCode, errorString, advansedOrderreject)
         error_message = f'Error id: {reqId}, Error code: {errorCode}, ' \
@@ -38,18 +41,24 @@ class TestApp(EWrapper, EClient):
         print(self.nextValidOrderId)
         self.start()
 
-    def tickOptionComputation(self, reqId, tickType, tickAttrib,
-                              impliedVol, delta, optPrice, pvDivident,
-                              gamma, vega, theta, undPrice):
-        super().tickOptionComputation(reqId, tickType, tickAttrib,
-                                  impliedVol, delta, optPrice, pvDivident,
-                                  gamma, vega, theta, undPrice)
-        print(delta, vega, gamma)
+    def tickPrice(self, reqId, tickType, price: float,
+                  attrib):
+        super().tickPrice(reqId, tickType, price, attrib)
+        if tickType == "4":
+            print("TickPrice. TickerId:", reqId, "tickType:", tickType,
+                      "Price:", price, "CanAutoExecute:", attrib.canAutoExecute,
+                      attrib.preOpen)
 
     def start(self):
-        contract = CustomContracts().aaplContract()
-        self.reqMktData(self.nextValidOrderId, contract, "", False, False, [])
+        contract = Contract()
 
+        contract.symbol = "BHP"
+        contract.exchange = "ASX"
+        contract.currency = "AUD"
+        contract.secType = "STK"
+
+        self.reqMarketDataType(3)
+        self.reqMktData(1, contract, '', False, False, [])
 
     def stop(self):
         self.done = True
@@ -59,7 +68,7 @@ class TestApp(EWrapper, EClient):
 def main():
     try:
         app = TestApp()
-        app.connect('172.22.21.200', 7496, clientId=0)
+        app.connect('127.0.0.1', 7496, clientId=3)
         print(f'{app.serverVersion()} --- {app.twsConnectionTime().decode()}')
         print(f'ibapi version: ', ibapi.__version__)
 #        Timer(5, app.stop).start()
