@@ -19,7 +19,8 @@ logging.basicConfig(
         logging.StreamHandler()
     ]
 )
-
+# TEST_USER: 'test1'
+# TEST_PASSWORD: '1234567'
 
 # --- Constants ---
 POLL_INTERVAL = 5  # seconds
