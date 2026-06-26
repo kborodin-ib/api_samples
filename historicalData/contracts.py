@@ -4,142 +4,94 @@ from ibapi.contract import Contract
 from ibapi.contract import ComboLeg
 
 
-class CustomContracts():
+contract = Contract() 
+
+class testContracts():
 
     def __init__(self):
         self.args = ""
 
-    def spxIndContract(self):
+
+    def qcomContract(self):
+
+        contract.symbol = 'QCOM'
+        contract.conid = 728962271
+        contract.lastTradeDateOrContractMonth = '20270115'
+        contract.exchange = 'SMART'
+        contract.secType = "OPT"
+        contract.strike = 150
+        contract.right = 'P'
+
+        return contract
+
+    def topX(self):
+
+        contract.symbol = "TOPX"
+        contract.secType = "FUT"
+        contract.lastTradeDateOrContractMonth = "20260910"
+        contract.multiplier = 10000
+        contract.exchange = "OSE.JPN"
+        contract.currency = "JPY"
+        
+        return contract
+
+    def bagContract(self):
 
         mycontract = Contract()
-        mycontract.exchange = "CBOE"
-        mycontract.secType ="IND"
-        mycontract.symbol ="SPX"
+        mycontract.symbol = "NOB"
+        mycontract.secType = "BAG"
         mycontract.currency = "USD"
+        mycontract.exchange = "CBOT"
+
+        leg1 = ComboLeg()
+        leg1.conId = 815824229# 3845
+        leg1.ratio = 2
+        leg1.action = "BUY"
+        leg1.exchange = "CBOT"
+
+        leg2 = ComboLeg()
+        leg2.conId = 815824224# 3855
+        leg2.ratio = 1
+        leg2.action = "SELL"
+        leg2.exchange = "CBOT"
         
-        return mycontract 
-    
-    def gbpContract(self):
-        
-        contract = Contract()
-        contract.conId = 12087811
+        mycontract.comboLegs = []
+        mycontract.comboLegs.append(leg1)
+        mycontract.comboLegs.append(leg2)
 
-        return contract
+        return mycontract
 
-    def cboeContract(self):
+    def dteOption(self):
 
-        contract = Contract()
-
-        contract.exchange = "CBOE"
-        contract.secType = "IND"
-        contract.symbol = "SPX"
-        contract.currency = "USD"
-
-        return contract
-
-    def aaplOptionContract(self):
-
-        contract = Contract()
-
-        contract.secType = "OPT"
-        contract.symbol = "AAPL"
-        contract.lastTradeDateOrContractMonth = "20241115"
-        contract.strike = 225
-        contract.currency = "USD"
-        contract.right = "C"
-        contract.multiplier = 100
-        contract.tradingClass = "AAPL"
-        contract.exchange = "SMART"
-        contract.conid = 682678216
-
-        return contract
-
-    def ibust100(self):
-
-        contract = Contract()
-
-        contract.currency = "USD"
-        contract.exchange = "SMART"
-        contract.secType = "CFD"
-        contract.symbol = "IBUST100"
-
-        return contract
-
-    def estx50contract(self):
-
-        contract = Contract()
-
-#        contract.conId = 595139153
-        contract.symbol = "ESTX50"
-        contract.secType = "OPT"
-        contract.lastTradeDateOrContractMonth = "20231215"
-        contract.strike = 4325
-        contract.right = "C"
-        contract.multiplier = 10
+        contract.symbol = "DTR"
         contract.exchange = "EUREX"
+        contract.strike = 29.5
         contract.currency = "EUR"
-        contract.localSymbol = "C OESX 20231215 4325 M"
-
-        return contract
-    
-    def aaplContract(self):
-
-        contract = Contract()
-        contract.conId = 265598
-        contract.exchange = "SMART"
-        contract.symbol = "AAPL"
-
-        return contract
-
-    def eurUsdContract(self):
-
-        contract = Contract()
-
-        contract.exchange = "IDEALPRO"
-        contract.symbol = "EUR"
-        contract.currency = "USD"
-        contract.secType = "CASH"
-
-        return contract
-
-    def mecContractCuntFut(self):
-
-        contract = Contract()
-
-        contract.exchange = "CME"
-        contract.currency = "USD"
-        contract.secType = "CONTFUT"
-        contract.symbol = "MES"
-
-        return contract
-
-    def spxOptionsContract(self):
-
-        contract = Contract()
-        contract.conId = 637792305
-        contract.exchange = "SMART"
-        contract.symbol = "SPXW"
-        contract.currency = "USD"
-        contract.secType = "OPT"
         contract.multiplier = 100
-        contract.right = "C"
-        contract.lastTradeDateOrContractMonth = "20231214"
-        contract.strike = 4570
-        contract.localSymbol = "SPX   231215C04570000"
-
-
-        return contract
-
-    def spyOptionsContract(self):
-
-        contract = Contract()
-
-        contract.conId = 663434788
-        contract.exchange = "SMART"
+        contract.right = "P"
+        contract.secType = "OPT"
+        contract.tradingClass = "DTE"
+        contract.lastTradeDateOrContractMonth = "20260529"
 
         return contract
 
+    def spyStkContract(self):
 
 
-if __name__ == "__main__":
-    contracts = CustomContracts()
+        contract.symbol = 'SPY'
+        contract.secType = "STK"
+        contract.exchange = "ARCA"
+        contract.currency = "USD"
+
+        return contract
+
+    def wierdChineseContract(self):
+
+
+        contract.symbol = "000001"
+        contract.exchange = "SEHKSZSE"
+        contract.secType = "STK"
+        contract.currency = "CNH"
+
+        return contract
+
