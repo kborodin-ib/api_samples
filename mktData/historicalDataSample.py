@@ -2,23 +2,46 @@
 
 import ibapi
 import logging
+import threading
 from ibapi.wrapper import EWrapper
 from ibapi.client import EClient
 from ibapi.contract import Contract
-from contracts import CustomContracts
+from contracts import testContracts 
 
 
 class TestApp(EWrapper, EClient):
 
-    def __init__(self):
+    def __init__(self, timeout=10):
         EWrapper.__init__(self)
         EClient.__init__(self, self)
+        self.timeout = timeout
+        self._timers = {}
+
+    # TIMEOUT HANDLERS
+
+    def _on_timeout(self, reqId):
+        print(f"ReqId: {reqId} | TIMEOUT - cancelling historical data request")
+        self.cancelHistoricalData(reqId)
+        self._timers.pop(reqId, None)
+
+    def _start_timer(self, reqId):
+        timer = threading.Timer(self.timeout, self._on_timeout, args=[reqId])
+        timer.daemon = True
+        self._timers[reqId] = timer
+        timer.start()
+
+    def _cancel_timer(self, reqId):
+        timer = self._timers.pop(reqId, None)
+        if timer:
+            timer.cancel()
 
     # WRAPPERS HERE
 
-    def error(self, reqId: int, errorCode: int, errorString: str,
+    def error(self, reqId: int,errorTime, errorCode: int, errorString: str,
             advansedOrderreject=""):
         super().error(reqId, errorCode, errorString, advansedOrderreject)
+        if reqId != -1:
+            self._cancel_timer(reqId)
         error_message = f'Error id: {reqId}, Error code: {errorCode}, ' \
                         + f'Msg: {errorString}'
 
@@ -41,27 +64,45 @@ class TestApp(EWrapper, EClient):
         print("Historical data: ", reqId, bar)
 
     def historicalDataEnd(self, reqId, start, end):
+        self._cancel_timer(reqId)
         super().historicalDataEnd(reqId, start, end)
         print("Historical data end for: ", self.clientId)
 
     def headTimestamp(self, reqId, headTimestamp):
         print("HeadTimeStamp: ", headTimestamp)
 
+    def request_historical_data(self, reqId, contract, endDateTime, 
+        durationString, barSizeSetting, whatToShow, useRTH):
+        self._start_timer(reqId)
+        self.reqHistoricalData(
+            reqId = reqId,
+            contract = contract,
+            endDateTime = endDateTime,
+            durationStr = durationString,
+            barSizeSetting = barSizeSetting,
+            whatToShow = whatToShow,
+            useRTH = useRTH,
+            formatDate = 1,
+            keepUpToDate = False,
+            chartOptions = []
+        )
+
     def start(self):
 
         contract = Contract()
 
         contract.secType = 'STK'
-        contract.currency = 'USD'
-        contract.exchange = 'NASDAQ'
-        contract.symbol = 'SMCI'
+        contract.symbol = 'APLZ'
+        contract.exchange = "SMART"
+        contract.currency = "USD"
+        contract.primaryExchange = "AMEX"
 
-#        endDate = '20231113 11:15:00 US/Eastern' 
-        endDate =""
+        endDate = '20250925 16:59:00 US/Eastern' 
+#        endDate =""
         self.reqHeadTimeStamp(self.nextValidOrderId, contract, whatToShow="TRADES", useRTH=True, formatDate=1)
         self.reqContractDetails(self.nextValidOrderId, contract)
-        self.reqHistoricalData(self.nextValidOrderId, contract, endDate, 
-                '1 M', '1 min', 'MIDPOINT', 0, 1, False, [])
+        self.request_historical_data(self.nextValidOrderId, contract, endDate, 
+                '5 D', '1 day', 'TRADES', 1)
 
     def stop(self):
         self.done = True
@@ -70,7 +111,7 @@ class TestApp(EWrapper, EClient):
 def main():
     try:
         app = TestApp()
-        app.connect('192.168.0.106', 7496, clientId=1)
+        app.connect('172.23.208.1', 7496, clientId=1)
         print(f'{app.serverVersion()} --- {app.twsConnectionTime().decode()}')
         print(f'ibapi version: ', ibapi.__version__)
 #        Timer(15, app.stop).start()
